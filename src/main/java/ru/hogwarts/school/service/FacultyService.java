@@ -1,8 +1,10 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repositories.FacultyRepository;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -12,36 +14,35 @@ import java.util.stream.Collectors;
 
 @Service
 public class FacultyService {
-    private final Map<Long, Faculty> facultyMap = new HashMap<>();
-    private Long idCounter = 0L;
+
+    private final FacultyRepository facultyRepository;
+
+    @Autowired     //вроде нужен только при нескольких конструкторах, но пусть будет
+    public FacultyService(FacultyRepository facultyRepository) {
+        this.facultyRepository = facultyRepository;
+    }
 
     public Faculty createFaculty(Faculty faculty) {
-        faculty.setId(idCounter++);
-        facultyMap.put(faculty.getId(), faculty);
-        return faculty;
+        return facultyRepository.save(faculty);
     }
 
     public Faculty getFaculty(Long id) {
-        return facultyMap.get(id);
+        return facultyRepository.findById(id).get();
     }
 
     public Collection<Faculty> getAllFaculty() {
-        return Collections.unmodifiableCollection(facultyMap.values());
+        return facultyRepository.findAll();
     }
 
     public Collection<Faculty> getFacultyByColor(String color) {
-        return facultyMap.values().stream().filter(s -> s.getColor().equalsIgnoreCase(color)).collect(Collectors.toList());
+        return facultyRepository.findByColor(color);
     }
 
     public Faculty updateFaculty(Faculty faculty) {
-        if (!facultyMap.containsKey(faculty.getId())) {
-            return null;
-        }
-        facultyMap.put(faculty.getId(), faculty);
-        return faculty;
+        return facultyRepository.save(faculty);
     }
 
-    public Faculty deleteFaculty(Long id) {
-        return facultyMap.remove(id);
+    public void deleteFaculty(Long id) {
+            facultyRepository.deleteById(id);
     }
 }

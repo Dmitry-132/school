@@ -12,7 +12,7 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/faculty")
 public class FacultyController {
-private final FacultyService facultyService;
+    private final FacultyService facultyService;
 
     public FacultyController(FacultyService facultyService) {
         this.facultyService = facultyService;
@@ -53,10 +53,7 @@ private final FacultyService facultyService;
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long id) {
-        Faculty deleted = facultyService.deleteFaculty(id);
-        if (deleted == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        return ResponseEntity.ok(deleted);
+        facultyService.deleteFaculty(id);
+        return ResponseEntity.ok().build();
     }
 }
