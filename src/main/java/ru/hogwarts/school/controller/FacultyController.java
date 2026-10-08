@@ -32,14 +32,28 @@ public class FacultyController {
         return ResponseEntity.ok(faculty);
     }
 
+    @GetMapping("/{id}/students")
+    public ResponseEntity<Collection<Student>> getFacultyStudents(@PathVariable Long id) {
+        Faculty faculty = facultyService.getFaculty(id);
+        if (faculty == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(faculty.getStudents());
+    }
+
     @GetMapping
     public Collection<Faculty> getAllFaculty() {
         return facultyService.getAllFaculty();
     }
 
-    @GetMapping("/filterByColor")
+    @GetMapping("/searchByColor") //тепер малоактуален, но удалить всегда успеется
     public Collection<Faculty> getFacultyByColor(@RequestParam String color) {
         return facultyService.getFacultyByColor(color);
+    }
+
+    @GetMapping("/search")
+    public Collection<Faculty> findByNameOrColor(@RequestParam String query) {
+        return facultyService.findByNameOrColor(query);
     }
 
     @PutMapping
