@@ -19,6 +19,9 @@ public class Student {
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
+    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL) //mappedBy - ведомая сторона, которая просто читает данные из таблицы с именем поля - student и ничего своего не создает. Сокращает запрос к аватару
+    private Avatar avatar; //       cascade- удалив студента, удалится закрепленный аватар
+
     public Faculty getFaculty() {
         return faculty;
     }
@@ -42,6 +45,8 @@ public class Student {
         this.age = age;
     }
 
+    public Avatar getAvatar() { return avatar; }
+
     public String getName() {
         return name;
     }
@@ -53,6 +58,8 @@ public class Student {
     public Long getId() {
         return id;
     }
+
+    public void setAvatar(Avatar avatar) { this.avatar = avatar; }
 
     public void setId(Long id) {
         this.id = id;
