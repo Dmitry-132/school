@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@OpenAPIDefinition //http://localhost:8080/swagger-ui
+@OpenAPIDefinition //http://localhost:8080/swagger-ui/index.html
 (
 		info = @Info(
 				title = "Тестирование API",
