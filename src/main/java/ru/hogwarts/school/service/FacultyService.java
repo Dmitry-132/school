@@ -45,4 +45,8 @@ public class FacultyService {
     public void deleteFaculty(Long id) {
             facultyRepository.deleteById(id);
     }
+
+    public Collection<Faculty> findByNameOrColor(String query) { //принимает два параметра,ищем по одному шаблну
+        return facultyRepository.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(query, query);
+    }
 }
