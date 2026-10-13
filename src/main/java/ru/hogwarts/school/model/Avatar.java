@@ -1,5 +1,6 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Arrays;
@@ -23,6 +24,7 @@ public class Avatar {
 
     @OneToOne
     @JoinColumn(name = "student_id") //явно указывает имя связующей колонки в таблице, хоть автоматика и поставит точно такое же
+    @JsonIgnore // иначе бесконечная рекурсия ru.hogwarts.school.model.Student["avatar"]->ru.hogwarts.school.model.Avatar["student"]->ru.hogwarts.school.model.Student["avatar"]->ru.hogwarts.school.model.Avatar["student"]->ru.hogwarts.school.model.Student["avatar"]->student
     private Student student;
 
     public Avatar() { //Без пустого конструктора hibernate не сможет создать объект
