@@ -41,8 +41,10 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public void deleteStudent(Long id) {
+    public Student deleteStudent(Long id) {
+        Student student = studentRepository.findById(id).orElse(null);
         studentRepository.deleteById(id);
+        return student;
     }
 
     public Collection<Student> getStudentsByAgeBetween(int min, int max) {

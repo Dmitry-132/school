@@ -42,8 +42,10 @@ public class FacultyService {
         return facultyRepository.save(faculty);
     }
 
-    public void deleteFaculty(Long id) {
-            facultyRepository.deleteById(id);
+    public Faculty deleteFaculty(Long id) {
+           Faculty faculty = facultyRepository.findById(id).orElse(null);
+           facultyRepository.deleteById(id);
+           return faculty;
     }
 
     public Collection<Faculty> findByNameOrColor(String query) { //принимает два параметра,ищем по одному шаблну
