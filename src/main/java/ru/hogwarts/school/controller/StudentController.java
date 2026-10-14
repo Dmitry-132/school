@@ -8,6 +8,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/student")
@@ -21,6 +22,21 @@ public class StudentController {
     @PostMapping
     public Student createStudent(@RequestBody Student student) {
         return studentService.createStudent(student);
+    }
+
+    @GetMapping("/count")
+    public Long getStudentsCount() {
+        return studentService.getStudentsCount();
+    }
+
+    @GetMapping("/averageAge")
+    public Double getAverageAge() {
+        return studentService.getAverageAge();
+    }
+
+    @GetMapping("/last") //?count=  или дефолт
+    public List<Student> getLastStudents(@RequestParam(defaultValue = "5") int count) {
+        return studentService.getLastStudents(count);
     }
 
     @GetMapping("/{id}")
