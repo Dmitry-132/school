@@ -2,6 +2,7 @@ package ru.hogwarts.school.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.AvatarService;
 
 import java.io.ByteArrayInputStream;
@@ -36,6 +38,12 @@ public class AvatarController {
 
         avatarService.uploadAvatar(studentId, file);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public Page<Avatar> getAllAvatars(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        return avatarService.getAllAvatars(page, size); //выдаст кодировку вместо аватарок, но, как я понял из обсуждения, так и должно быть
     }
 
     @GetMapping("/{studentId}/preview")
