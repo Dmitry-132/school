@@ -1,0 +1,3 @@
+databaseChangeLog: #В YAML отступы и пробелы критичны
+  - include:
+      file: liquibase/scripts/users.sql
