@@ -1,19 +1,27 @@
 --liquibase formatted sql
 
 --changeset ds:1
-CREATE TABLE IF NOT EXISTS student
-(
-    id         BIGSERIAL PRIMARY KEY,
-    name       VARCHAR(255) NOT NULL,
-    age        INT          NOT NULL,
-    faculty_id BIGINT
-);
-
 CREATE TABLE IF NOT EXISTS faculty
 (
     id    BIGSERIAL PRIMARY KEY,
     name  VARCHAR(255) NOT NULL,
-    color VARCHAR(255) NOT NULL
+    color VARCHAR(255) NOT NULL,
+    CONSTRAINT uq_faculty_name_color UNIQUE (name, color)
+);
+
+CREATE TABLE IF NOT EXISTS student
+(
+    id         BIGSERIAL PRIMARY KEY,
+    name       VARCHAR(255) NOT NULL,
+    age        INT          NOT NULL DEFAULT 20,
+    faculty_id BIGINT,
+    CONSTRAINT uq_student_name UNIQUE (name),
+    CONSTRAINT chk_student_age CHECK (age >= 16),
+    CONSTRAINT fk_student_faculty
+        FOREIGN KEY (faculty_id)
+            REFERENCES faculty (id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS avatar
@@ -23,7 +31,11 @@ CREATE TABLE IF NOT EXISTS avatar
     file_size  BIGINT,
     media_type VARCHAR(255),
     preview    BYTEA,
-    student_id BIGINT UNIQUE
+    student_id BIGINT UNIQUE,
+    CONSTRAINT fk_avatar_student FOREIGN KEY (student_id)
+        REFERENCES student (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 --changeset ds:2
