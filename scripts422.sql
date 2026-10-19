@@ -1,4 +1,5 @@
-CREATE TABLE car
+--DROP TABLE IF EXISTS person; - при перезапуске скрипта создается новая структура со всеми новыми изменениями, но удаляются все сохраненные данные
+CREATE TABLE car --CREATE TABLE IF NOT EXISTS [имя_таблицы] - защищает от ошибки при запуске скрипта, если таблица уже существует
 (
     id    SERIAL PRIMARY KEY,
     brand VARCHAR(20)   NOT NULL,
@@ -32,7 +33,7 @@ ALTER TABLE person
         CHECK (age >= 0 AND age <= 110),
     ADD CONSTRAINT chk_person_car_requires_license
         CHECK (
-            (has_drivers_license = TRUE AND car_id IS NOT NULL)
+            (has_drivers_license = TRUE)
                 OR
             (has_drivers_license = FALSE AND car_id IS NULL)
             );
