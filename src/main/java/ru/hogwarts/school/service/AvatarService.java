@@ -1,6 +1,8 @@
 package ru.hogwarts.school.service;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +26,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Transactional
 public class AvatarService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AvatarService.class);
 
     @Value("${avatars.dir.path}")
     private String avatarsDir;
@@ -37,12 +40,21 @@ public class AvatarService {
     }
 
     public Page<Avatar> getAllAvatars(int page, int size) {
-        return avatarRepository.findAllAvatars(PageRequest.of(page, size));
+        logger.info("Was invoked method for get avatars by page = {}, size = {}", page, size);
+        Page<Avatar> avatars = avatarRepository.findAllAvatars(PageRequest.of(page, size));
+        if (size > avatars.getTotalElements()) { //хз сработает ли
+            logger.warn(" {} is more avatars than the total amount", size);
+        }
+        return avatars;
     }
 
-    public void uploadAvatar(Long studentId, MultipartFile file) throws IOException {
+    public Avatar uploadAvatar(Long studentId, MultipartFile file) throws IOException {
+        logger.info("Was invoked method for upload avatar for student with id = {}", studentId);
         Student student = studentService.getStudent(studentId);
-
+        if (student == null) {
+            logger.error("uploadAvatar: Student with id = {} not found", studentId);
+            return null;
+        }
         Path filePath = Path.of(avatarsDir, studentId + "." + getExtension(file.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
@@ -62,14 +74,17 @@ public class AvatarService {
         avatar.setMediaType(file.getContentType());
         avatar.setPreview(generateImagePreview(filePath));
 
-        avatarRepository.save(avatar);
+        return avatarRepository.save(avatar);
     }
 
     public Avatar findAvatar(Long studentId) {
+        logger.info("Was invoked method for find avatar by student id = {}", studentId);
+
         return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
     }
 
     private byte[] generateImagePreview(Path filePath) throws IOException {
+        logger.debug("Was invoked method generate image preview for file: {}", filePath);
         try (InputStream is = Files.newInputStream(filePath);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {

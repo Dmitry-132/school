@@ -35,8 +35,10 @@ public class AvatarController {
         if (file.getSize() > 1024 * 1024) {
             return ResponseEntity.badRequest().body("File is too big");
         }
-
-        avatarService.uploadAvatar(studentId, file);
+        Avatar result = avatarService.uploadAvatar(studentId, file);
+        if (result == null) {
+            return ResponseEntity.badRequest().body("Student with id = " + studentId + " not found");
+        }
         return ResponseEntity.ok().build();
     }
 
@@ -73,5 +75,7 @@ public class AvatarController {
             response.setContentLength((int) avatar.getFileSize());
             is.transferTo(os);
         }
+
+
     }
 }
