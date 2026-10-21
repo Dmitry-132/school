@@ -56,6 +56,11 @@ public class FacultyController {
         return facultyService.findByNameOrColor(query);
     }
 
+    @GetMapping("/longestName")
+    public String getLongestFacultyName() {
+        return facultyService.getLongestFacultyName();
+    }
+
     @PutMapping
     public ResponseEntity<Faculty> updateFaculty(@RequestBody Faculty faculty) {
         Faculty updated = facultyService.updateFaculty(faculty);

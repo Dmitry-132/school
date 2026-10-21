@@ -29,6 +29,11 @@ public class StudentController {
         return studentService.getStudentsCount();
     }
 
+    @GetMapping("/namesWith ")
+    public List<String> getStudentNames(@RequestParam(defaultValue = "А") String letter) {
+        return studentService.getStudentWhoseNamesStartsWith(letter);
+    }
+
     @GetMapping("/averageAge")
     public Double getAverageAge() {
         return studentService.getAverageAge();
