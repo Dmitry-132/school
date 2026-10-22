@@ -9,6 +9,10 @@ import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/student")
@@ -95,5 +99,73 @@ public class StudentController {
         }
         return ResponseEntity.ok(deleted);
     }
+
+    @GetMapping("/print-parallel")
+    public void printParallel() {
+        List<Student> students = studentService.getAllStudents().stream().toList();
+        if (students.size() < 6) {
+            return;
+        }
+        System.out.println("0 " + students.get(0).getName());
+        System.out.println("0 " + students.get(1).getName());
+
+        Thread thread1 = new Thread(() -> {
+            System.out.println("1 " + students.get(2).getName());
+            System.out.println("1 " + students.get(3).getName());
+
+        });
+
+        Thread thread2 = new Thread(() -> {
+            System.out.println("2 " + students.get(4).getName());
+            System.out.println("2 " + students.get(5).getName());
+
+        });
+        thread1.start();
+        thread2.start();
+    }
+
+    private final Object flag = new Object();
+
+    @GetMapping("/print-synchronized")
+    public void printParallelSynchronized() {
+        List<Student> students = studentService.getAllStudents().stream().toList();
+        if (students.size() < 6) {
+            return;
+        }
+        Thread thread1 = new Thread(() -> {
+            doOperaation(1, students.get(2));
+            doOperaation(1, students.get(3));
+
+        });
+        Thread thread2 = new Thread(() -> {
+            doOperaation(2, students.get(4));
+            doOperaation(2, students.get(5));
+        });
+        thread1.start();
+        thread2.start();
+        doOperaation(0, students.get(0));
+        doOperaation(0, students.get(1));
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        System.out.println("метод завершен");
+    }
+
+    private void doOperaation(int threads, Student student) {
+        String name = student.getName().toUpperCase();
+        try {
+            Thread.sleep(4000); //метод с throws InterruptedException и он может быть прерван другим потоком типа thread.interrupt()
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Восстанавливаем флаг прерывания (best practice) и если честно я это вроде и понял но не совсем
+            System.out.println("Поток был прерван: " + e.getMessage());
+        }
+        synchronized (flag) {
+            System.out.println(threads + " " + name);
+        }
+    }
+
 
 }
